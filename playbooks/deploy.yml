@@ -1,0 +1,29 @@
+---
+- name: Deploy web application
+  hosts: webservers
+  become: yes
+  vars:
+    app_name: myapp
+    app_port: 8080
+  
+  tasks:
+    - name: Install dependencies
+      apt:
+        name:
+          - nginx
+          - python3-pip
+        state: present
+        update_cache: yes
+    
+    - name: Copy application files
+      copy:
+        src: app/
+        dest: /opt/{{ app_name }}/
+        owner: www-data
+        group: www-data
+    
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
